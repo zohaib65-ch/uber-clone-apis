@@ -10,12 +10,12 @@ module.exports.createUser = async ({ firstname, lastname, email, password }) => 
   const user = new userModel({
     fullname: {
       firstname,
-      lastname, // ✅ use actual value
+      lastname,
     },
     email,
     password,
   });
 
-  await user.save(); // ✅ Save to MongoDB
+  await user.save();
   return user;
 };
