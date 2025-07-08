@@ -9,7 +9,11 @@ module.exports.registerUser = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
   const { fullname, email, password } = req.body;
+  const isUserAlreadyExist = await userModel.findOne({ email });
 
+  if (isUserAlreadyExist) {
+    return res.status(400).json({ message: "User already exists" });
+  }
   const hashPassword = await userModel.hashPassword(password);
 
   const user = await userService.createUser({
@@ -43,7 +47,7 @@ module.exports.getUserProfile = async (req, res) => {
   res.status(200).json(req.user);
 };
 module.exports.logoutUser = async (req, res) => {
- res.clearCookie("token"); 
+  res.clearCookie("token");
   const authHeader = req.headers.authorization;
   const token = req.cookies.token || (authHeader && authHeader.startsWith("Bearer ") && authHeader.split(" ")[1]);
   await BlacklistTokenModal.create({ token });
